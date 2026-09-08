@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Finder — Batch</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Social Finder <span class="muted">— batch mode</span></h1>
+      <p class="muted">Paste multiple URLs or usernames, or upload a .txt/.csv file. Processed one at a time. Max {{ max_batch_size }} per run.</p>
+    </header>
+
+    <form method="POST" enctype="multipart/form-data" class="form">
+      <label for="urls">URLs or usernames <span class="muted">(one per line)</span></label>
+      <textarea id="urls" name="urls" rows="6" placeholder="example.com&#10;another-site.org&#10;@someusername">{{ pasted_text }}</textarea>
+
+      <label for="file">…and/or upload a .txt or .csv file</label>
+      <input type="file" id="file" name="file" accept=".txt,.csv">
+
+      <button type="submit">Run batch</button>
+    </form>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    {% if batch_results %}
+      <div class="batch-header">
+        <h2>Results <span class="muted">({{ batch_results|length }} entr{{ 'y' if batch_results|length == 1 else 'ies' }})</span></h2>
+        <div class="export-buttons">
+          <a href="{{ url_for('export_csv') }}" class="btn-secondary">Download CSV</a>
+          <a href="{{ url_for('export_json') }}" class="btn-secondary">Download JSON</a>
+        </div>
+      </div>
+
+      {% for record in batch_results %}
+        <div class="card">
+          <div class="card-title">
+            <span class="badge">{{ record.type or '?' }}</span>
+            <strong>{{ record.input }}</strong>
+          </div>
+
+          {% if record.error %}
+            <p class="note error-note">{{ record.error }}</p>
+          {% endif %}
+
+          {% if record.pages_checked %}
+            <p class="note">Checked: {{ record.pages_checked|join(', ') }}</p>
+          {% endif %}
+
+          {% if record.results %}
+            <h3>Found on this site</h3>
+            <ul class="link-list">
+              {% for platform, urls in record.results.items() %}
+                {% for u in urls %}
+                  <li><span class="platform">{{ platform }}</span> <a href="{{ u }}" target="_blank" rel="noopener">{{ u }}</a></li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if record.other_matches %}
+            <h3>Same username elsewhere <span class="muted">(unconfirmed)</span></h3>
+            <ul class="link-list">
+              {% for platform, u in record.other_matches.items() %}
+                <li><span class="platform">{{ platform }}</span> <a href="{{ u }}" target="_blank" rel="noopener">{{ u }}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</body>
+</html>
