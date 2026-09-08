@@ -4,6 +4,9 @@ A small local Flask tool that finds a website's official social media links, and
 
 Runs in batch mode: paste multiple URLs/usernames (or upload a `.txt`/`.csv`), and it processes them one at a time, with results viewable in the browser and exportable as CSV or JSON.
 
+<img width="981" height="587" alt="image" src="https://github.com/user-attachments/assets/9fdd396e-fd3f-4d58-909d-65d84f252f5d" />
+
+
 ## Features
 
 - **Scrape a site for its social links** — checks the homepage plus common `/about` and `/contact` pages, prioritizing header/footer/nav areas and page metadata (`sameAs`, Twitter meta tags) over links buried in body content.
