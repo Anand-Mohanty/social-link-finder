@@ -1,4 +1,4 @@
-# Social Finder
+# Social Link Finder
 
 A small local Flask tool that finds a website's official social media links, and can cross-check a username against a curated list of other platforms to see where else it's registered.
 
